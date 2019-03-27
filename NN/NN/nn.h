@@ -56,7 +56,7 @@ public:
 	void Forward()
 	{
 
-
+		//MNIST.ReadFile(
 
 
 
