@@ -1,6 +1,7 @@
 
 
-#include <vector>
+#include "mnist.h"
+
 
 class Neuron
 {
@@ -40,6 +41,10 @@ private:
 	friend Neuron;
 
 public:
+	//for test
+	Network(){}
+
+
 	Network(size_t _inputSize, size_t _outputSize, size_t _layerSize, size_t _neuronSize)
 		: inputSize(_inputSize), outputSize(_outputSize), layerSize(_layerSize), neuronSize(_neuronSize)
 	{
@@ -55,11 +60,15 @@ public:
 
 	void Forward()
 	{
+		MNIST::LoadData(
+			"dataset/train-images.idx3-ubyte",
+			"dataset/train-labels.idx1-ubyte",
+			[=](std::vector<double> imageArr, std::vector<double> labelArr)
+			{
+				std::cout << imageArr.size() << std::endl;
 
-		//MNIST.ReadFile(
-
-
-
+			}
+		);
 	}
 
 

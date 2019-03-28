@@ -1,9 +1,10 @@
-#include "mnist.h"
+#include "nn.h"
 
 int main()
 {
-	MNIST m;
-	m.ReadFile("dataset/train-labels.idx1-ubyte");
+	Network nw;
+
+	nw.Forward();
 
 	return 0;
 }
