@@ -2,9 +2,9 @@
 
 int main()
 {
-	Network nw;
+	Network nw(28*28, 8, 5, 10);
+	nw.Training();
 
-	nw.Forward();
 
 	return 0;
 }

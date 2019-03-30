@@ -5,6 +5,7 @@
 #include <string>
 #include <functional>	//std::function
 #include <vector>		//std::vector
+#include <cassert>		//assert()
 
 class MNIST
 {
@@ -19,6 +20,21 @@ private:
 
 	typedef std::function<void(std::vector<double>)> CallbackType;
 	typedef std::function<void(std::vector<double>, std::vector<double>)> CallbackType2;
+
+	static int ConvertInt(int val)
+	{
+		int ret = 0;
+		int temp = 0xff000000;
+		for (int i = 0; i < 3; i++)
+		{
+			ret |= val & temp;
+			val <<= 8;
+			ret >>= 8;
+			ret &= 0x00ffffff;
+		}
+
+		return ret;
+	}
 
 	static std::vector<double> GetVectorFromBytes(void* byte, size_t size)
 	{
@@ -91,7 +107,7 @@ private:
 		is.read((char*)&width, sizeof(int));
 		is.read((char*)&height, sizeof(int));
 
-		size_t imageSize = width * height;
+		size_t imageSize = ConvertInt(width) * ConvertInt(height);
 
 		int cnt = 0;
 		while (!is.eof())
@@ -110,14 +126,17 @@ private:
 
 		imageIs.read((char*)&numOfImage, sizeof(int));	//first 4bytes means magic number(MSB first)
 		imageIs.read((char*)&numOfImage, sizeof(int));
+		numOfImage = ConvertInt(numOfImage);
 		int width, height;
 		imageIs.read((char*)&width, sizeof(int));
 		imageIs.read((char*)&height, sizeof(int));
-		size_t imageSize = width * height;
+		size_t imageSize = ConvertInt(width) * ConvertInt(height);
 
 		labelIs.read((char*)&numOfLabel, sizeof(int));	//first 4bytes means magic number(MSB first)
 		labelIs.read((char*)&numOfLabel, sizeof(int));
+		numOfLabel = ConvertInt(numOfLabel);
 
+		assert(numOfImage == numOfLabel);
 
 		while (!imageIs.eof())
 		{
@@ -125,8 +144,8 @@ private:
 			for (size_t i = 0; i < imageSize; i++)
 			{
 				unsigned char pixel;
-				imageIs.read((char*)&pixel, sizeof(unsigned char));
-				imageArr.push_back(pixel == 0);
+  				imageIs.read((char*)&pixel, sizeof(unsigned char));
+				imageArr.push_back(pixel != 0);
 			}
 
 			unsigned char temp;
